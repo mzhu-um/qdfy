@@ -1,20 +1,27 @@
 #!/bin/bash
 
-PREFIX=$HOME/qdafny
+PREFIX=$(cd $(dirname $(dirname -- $(readlink $0))); pwd)
+LOCAL=$HOME/.local/dafny
+
+check_setup() {
+    echo "The qafny project directory is located in ${PREFIX}"
+}
 
 do_status() {
-    if [[ -s $PREFIX/dafny ]]; then 
+    if [[ -s $LOCAL ]]; then 
         readlink $PREFIX/dafny
     else
-        echo "{$PREFIX}/dafny is not a link."
+        echo "[$LOCAL] has not been set yet."
     fi
 }
 
 do_set() {
-    TARGET=$PREFIX/dafny-$1
+    TARGET=$PREFIX/$1
     if [[ -d $TARGET ]] ; then
-        rm $PREFIX/dafny
-        ln -sf $TARGET $PREFIX/dafny
+        if [[ -s $LOCAL ]]; then 
+            rm $LOCAL
+        fi
+        ln -sf $TARGET $LOCAL
         echo "dafny is now set to $TARGET."
     else
         echo "$TARGET doesn't exist."
@@ -28,9 +35,22 @@ check_param_count() {
   fi
 }
 
+dump_usage() {
+    cat <<EOF
+Usage: $(basename -- $0) [OPTION]
+Link Dafny Project Directory to .local/
+
+  c | check      Check current tool setup
+  g | get        Get current setup
+  s | set        Switch to the given directory        
+EOF
+}
+
+
 ## Main
 case $1 in
+  'c' | 'check')  check_setup;;
   'g' | 'get')    do_status;;
   's' | 'set')    check_param_count $# 2; do_set $2;;
-  *)              echo "$(basename $0): unknown option '$@'"; exit 1;;
+  *)           echo "$(basename $0): unknown option '$@'"; dump_usage; exit 1;;
 esac
