@@ -1,0 +1,9 @@
+[submodule "qdafny"]
+	path = qdafny
+	url = git@github.com:mzhu65536-um/qdafny.git
+[submodule "dafny-libraries"]
+           path = libraries
+           url = https://github.com/dafny-lang/libraries.git
+[submodule "libraries"]
+	path = libraries
+	url = https://github.com/dafny-lang/libraries.git

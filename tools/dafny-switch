@@ -1,0 +1,36 @@
+#!/bin/bash
+
+PREFIX=$HOME/qdafny
+
+do_status() {
+    if [[ -s $PREFIX/dafny ]]; then 
+        readlink $PREFIX/dafny
+    else
+        echo "{$PREFIX}/dafny is not a link."
+    fi
+}
+
+do_set() {
+    TARGET=$PREFIX/dafny-$1
+    if [[ -d $TARGET ]] ; then
+        rm $PREFIX/dafny
+        ln -sf $TARGET $PREFIX/dafny
+        echo "dafny is now set to $TARGET."
+    else
+        echo "$TARGET doesn't exist."
+    fi
+}
+
+check_param_count() {
+  if [ $1 -ne $2 ]; then
+    echo 'Wrong parameter count'
+    exit 2
+  fi
+}
+
+## Main
+case $1 in
+  'g' | 'get')    do_status;;
+  's' | 'set')    check_param_count $# 2; do_set $2;;
+  *)              echo "$(basename $0): unknown option '$@'"; exit 1;;
+esac
